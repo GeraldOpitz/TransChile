@@ -12,7 +12,7 @@ pipeline {
     }
 
     stages {
-        stage('Checkout código') {
+        stage('Checkout codigo') {
             steps {
                 checkout scm
             }
@@ -21,6 +21,12 @@ pipeline {
         stage('Compilar') {
             steps {
                 bat 'mvn clean compile'
+            }
+        }
+
+        stage('Empaquetar') {
+            steps {
+                bat 'mvn clean package'
             }
         }
 
