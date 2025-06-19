@@ -9,25 +9,28 @@ pipeline {
     stages {
         stage('Clonar repositorio') {
             steps {
-                git 'https://github.com/tu-usuario/transchile-ci-demo.git'
+                git 'https://github.com/GeraldOpitz/TransChile.git'
             }
         }
 
         stage('Compilar') {
             steps {
-                sh 'mvn clean compile'
+                bat 'mvn clean compile'
             }
         }
 
         stage('Pruebas') {
             steps {
-                sh 'mvn test'
+                bat 'mvn test'
             }
         }
 
-        stage('Análisis de calidad (opcional)') {
+        stage('Análisis de calidad con SonarQube') {
             steps {
-                echo 'Aquí se puede integrar SonarQube más adelante'
+                withSonarQubeEnv('SonarQube') {
+                    bat 'mvn sonar:sonar -Dsonar.projectKey=TransChile -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN'
+
+                }
             }
         }
 
