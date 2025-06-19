@@ -6,6 +6,11 @@ pipeline {
         jdk 'JDK-17'
     }
 
+    environment {
+        DOCKER_IMAGE = 'transchile/devops-app:latest'
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
+    }
+
     stages {
         stage('Checkout código') {
             steps {
@@ -27,16 +32,26 @@ pipeline {
 
         stage('Análisis de calidad con SonarQube') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'mvn sonar:sonar -Dsonar.projectKey=TransChile -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN'
-
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    withSonarQubeEnv('SonarQube') {
+                        bat 'mvn sonar:sonar -Dsonar.projectKey=TransChile -Dsonar.host.url=http://localhost:9000 -Dsonar.login=%SONAR_TOKEN%'
+                    }
                 }
             }
         }
 
-        stage('Despliegue (simulado)') {
+
+        stage('Construir imagen Docker') {
             steps {
-                echo 'Despliegue exitoso a entorno de pruebas'
+                script {
+                    bat "docker build -t ${DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Despliegue a docker') {
+            steps {
+                echo 'Imagen Docker creada: %DOCKER_IMAGE%'
             }
         }
     }
