@@ -7,9 +7,9 @@ pipeline {
     }
 
     stages {
-        stage('Clonar repositorio') {
+        stage('Checkout código') {
             steps {
-                git 'https://github.com/GeraldOpitz/TransChile.git'
+                checkout scm
             }
         }
 
