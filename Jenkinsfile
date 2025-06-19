@@ -57,7 +57,7 @@ pipeline {
 
         stage('Despliegue a docker') {
             steps {
-                echo 'Imagen Docker creada: %DOCKER_IMAGE%'
+                echo "Imagen Docker creada: ${DOCKER_IMAGE}"
             }
         }
     }
